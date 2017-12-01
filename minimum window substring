@@ -1,0 +1,32 @@
+public class Solution {
+    public String minWindow(String s, String t) {
+        int[] map = new int[256];
+        for(int i = 0 ; i < t.length(); i++){
+            map[t.charAt(i)]++;
+        }
+        String res = "";
+        int min = s.length();
+        int left = 0; int right = 0; int toMatch = t.length();
+       
+        while(right < s.length()){
+            if(map[s.charAt(right)] >= 1) {
+                toMatch--;  
+            }
+            map[s.charAt(right)]--;
+            right++;
+            
+            while(toMatch == 0) {
+                if(right - left <= min) {
+                    res = s.substring(left,right);
+                    min = right - left;
+                }
+                if(map[s.charAt(left)] == 0){
+                    toMatch++;
+                }
+                map[s.charAt(left)]++;
+                left++;   
+            }   
+        }
+        return res;
+    }
+}

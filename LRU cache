@@ -1,0 +1,75 @@
+class DLinkedNode {
+    int key;
+    int value;
+    DLinkedNode pre;
+    DLinkedNode next;
+    public DLinkedNode(int key, int value){
+        this.key = key;
+        this.value = value;
+        pre = null;
+        next = null;
+    }
+}
+
+public class LRUCache {
+    private int capacity;
+    private DLinkedNode head;
+    private DLinkedNode tail;
+    private Map<Integer, DLinkedNode> hm;
+    
+    public LRUCache(int capacity) {
+        hm = new HashMap();
+        this.capacity = capacity;
+        head = new DLinkedNode(-1,-1);
+        tail = new DLinkedNode(-1,-1);
+        head.next = tail;
+        tail.pre = head;
+    }
+    
+    public int get(int key) { 
+        if(hm.containsKey(key)){
+            DLinkedNode node = hm.get(key);
+            node.pre.next = node.next;
+            node.next.pre = node.pre;
+            moveToTail(node);
+            return node.value;
+        } else {
+            return -1;
+        }
+    }
+    
+    public void put(int key, int value) {
+        if(hm.containsKey(key)){
+            DLinkedNode node = hm.get(key);
+            node.pre.next = node.next;
+            node.next.pre = node.pre;
+            node.value = value;
+            moveToTail(node);
+            return;
+        } 
+        if (hm.size() == this.capacity) {
+            hm.remove(head.next.key);
+            head.next = head.next.next;
+            head.next.pre = head;
+            //System.out.println(hm);
+        }
+
+        DLinkedNode newNode = new DLinkedNode(key,value);
+        hm.put(key,newNode);
+        moveToTail(newNode); 
+    }
+    
+    private void moveToTail(DLinkedNode node){
+        node.pre = tail.pre;
+        tail.pre.next = node;
+        tail.pre = node;
+        node.next = tail;
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
